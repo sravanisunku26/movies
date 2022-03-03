@@ -27,6 +27,6 @@ To Support Multi resoultion:
 
 Notes:
 ------------
-I have implemented Juint test cases only.
+I have implemented Juint test cases and instrumentation test cases also.
 
 
