@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">sample Assignment</string>
+    <string name="title">MOVIEBOX</string>
+    <string name="playing_now">Playing Now</string>
+    <string name="most_popular">Most Popular</string>
+    <string name="over_view">Overview</string>
+    <string name="network_connection_lost">Please Connect to Internet</string>
+    <string name="network_connection_available">Internet Connected</string>
+    <string name="please_connect_internet">Please Connect to internet</string>
+</resources>
