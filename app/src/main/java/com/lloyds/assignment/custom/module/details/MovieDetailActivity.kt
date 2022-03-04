@@ -112,18 +112,21 @@ fun setReleaseDateAndDuration(view: TextView, movieDetailResponse: MovieDetailRe
         val hours = minutes?.let { TimeUnit.MINUTES.toHours(it) }
         val remainMinutes = hours?.let { TimeUnit.HOURS.toMinutes(it) }?.let { minutes?.minus(it) }
         val input_date = movieDetailResponse?.release_date
-        val format1 = SimpleDateFormat("yyyy-MM-dd")
-        val dt1: Date = format1.parse(input_date)
-        val format2 = SimpleDateFormat("MMMM dd, YYYY")
+        if(!input_date.isNullOrEmpty()) {
+            val format1 = SimpleDateFormat("yyyy-MM-dd")
+            val dt1: Date = format1.parse(input_date)
+            val format2 = SimpleDateFormat("MMMM dd, YYYY")
 
 
-        view.setText(
-            format2.format(dt1) + " - " + String.format(
-                "%dh %02dm",
-                hours,
-                remainMinutes
+
+            view.setText(
+                format2.format(dt1) + " - " + String.format(
+                    "%dh %02dm",
+                    hours,
+                    remainMinutes
+                )
             )
-        )
+        }
     }
 
 }
