@@ -17,9 +17,8 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MovieRepo : PageKeyedDataSource<Int, Results>() {
+class MovieRepo(private val context: Context) : PageKeyedDataSource<Int, Results>() {
     private val FIRST_PAGE = 1
-    private lateinit var context: Context
 
     companion object {
         private val myOkHttpClient = OkHttpClient().newBuilder()
@@ -36,10 +35,12 @@ class MovieRepo : PageKeyedDataSource<Int, Results>() {
         var PAGE_SIZE = 6
     }
 
-    fun getPlayingNowResponse(context: Context): LiveData<PlayingNowResponse> {
+    /**
+     * Playing now Movies list
+     */
+    fun getPlayingNowResponse(): LiveData<PlayingNowResponse> {
         Log.v("getPlayingNowResponse", "getPlayingNowResponse")
         val liveData = MutableLiveData<PlayingNowResponse>()
-        this.context = context
         if (Utils.internetCheck(context)) {
             service.getPlayingNowResponse().enqueue(object : Callback<PlayingNowResponse> {
                 override fun onResponse(
@@ -67,9 +68,11 @@ class MovieRepo : PageKeyedDataSource<Int, Results>() {
         return liveData
     }
 
-    fun getMovieDetailInfo(movieId: Int, context: Context): LiveData<MovieDetailResponse> {
+    /**
+     * Movie details api calling
+     */
+    fun getMovieDetailInfo(movieId: Int): LiveData<MovieDetailResponse> {
         val liveData = MutableLiveData<MovieDetailResponse>()
-        this.context = context
         if (Utils.internetCheck(context)) {
             service.getMovieDetailResponse(movieId).enqueue(object : Callback<MovieDetailResponse> {
                 override fun onResponse(
@@ -96,15 +99,17 @@ class MovieRepo : PageKeyedDataSource<Int, Results>() {
         params: LoadInitialParams<Int>,
         callback: LoadInitialCallback<Int, Results>
     ) {
-        var response: Response<PopularListResponse> =
-            service.getPopularListResponse(FIRST_PAGE).execute();
+        if (Utils.internetCheck(context)) {
+            val response: Response<PopularListResponse> =
+                service.getPopularListResponse(FIRST_PAGE).execute();
 
-        val apiResponse = response.body()!!
-        val results = apiResponse.results;
-        PAGE_SIZE = apiResponse.total_pages;
-        Log.v("loadInitial", results.toString())
-        apiResponse?.let {
-            callback.onResult(results, null, FIRST_PAGE + 1)
+            val apiResponse = response.body()!!
+            val results = apiResponse.results;
+            PAGE_SIZE = apiResponse.total_pages;
+            Log.v("loadInitial", results.toString())
+            apiResponse.let {
+                callback.onResult(results, null, FIRST_PAGE + 1)
+            }
         }
     }
 
@@ -112,7 +117,8 @@ class MovieRepo : PageKeyedDataSource<Int, Results>() {
         params: LoadParams<Int>,
         callback: LoadCallback<Int, Results>
     ) {
-        service.getPopularListResponse(params.key)
+        if (Utils.internetCheck(context)) {
+            service.getPopularListResponse(params.key)
             .enqueue(object : Callback<PopularListResponse> {
                 override fun onResponse(
                     call: Call<PopularListResponse>,
@@ -121,11 +127,11 @@ class MovieRepo : PageKeyedDataSource<Int, Results>() {
                     if (response.isSuccessful) {
                         val apiResponse = response.body()!!
                         val results: List<Results> = apiResponse.results
-                        var listResponse = ArrayList<PopularListResponse>();
+                        val listResponse = ArrayList<PopularListResponse>();
                         listResponse.add(apiResponse)
                         Log.v("loadBefore", results.toString())
                         val key = if (params.key > 1) params.key - 1 else 0
-                        apiResponse?.let {
+                        apiResponse.let {
                             callback.onResult(results, key)
                         }
                     }
@@ -136,34 +142,37 @@ class MovieRepo : PageKeyedDataSource<Int, Results>() {
                 }
 
             })
+        }
     }
 
     override fun loadAfter(
         params: LoadParams<Int>,
         callback: LoadCallback<Int, Results>
     ) {
-        service.getPopularListResponse(params.key)
-            .enqueue(object : Callback<PopularListResponse> {
-                override fun onResponse(
-                    call: Call<PopularListResponse>,
-                    response: Response<PopularListResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        val apiResponse = response.body()!!
-                        val results = apiResponse.results
-                        val key = params.key + 1
-                        Log.v("loadAfter", results.toString())
+        if (Utils.internetCheck(context)) {
+            service.getPopularListResponse(params.key)
+                .enqueue(object : Callback<PopularListResponse> {
+                    override fun onResponse(
+                        call: Call<PopularListResponse>,
+                        response: Response<PopularListResponse>
+                    ) {
+                        if (response.isSuccessful) {
+                            val apiResponse = response.body()!!
+                            val results = apiResponse.results
+                            val key = params.key + 1
+                            Log.v("loadAfter", results.toString())
 
-                        apiResponse?.let {
-                            callback.onResult(results, key)
+                            apiResponse.let {
+                                callback.onResult(results, key)
+                            }
                         }
+
                     }
 
-                }
+                    override fun onFailure(call: Call<PopularListResponse>, t: Throwable) {
+                    }
 
-                override fun onFailure(call: Call<PopularListResponse>, t: Throwable) {
-                }
-
-            })
+                })
+        }
     }
 }

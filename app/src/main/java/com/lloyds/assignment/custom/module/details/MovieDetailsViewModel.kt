@@ -8,7 +8,7 @@ import com.lloyds.assignment.custom.repo.MovieRepo
 
 class MovieDetailsViewModel(private val movieRepo: MovieRepo): ViewModel() {
 
-    fun getMovieDetails(movieId:Int, context: Context) : LiveData<MovieDetailResponse>{
-       return movieRepo.getMovieDetailInfo(movieId, context)
+    fun getMovieDetails(movieId:Int) : LiveData<MovieDetailResponse>{
+       return movieRepo.getMovieDetailInfo(movieId)
     }
 }

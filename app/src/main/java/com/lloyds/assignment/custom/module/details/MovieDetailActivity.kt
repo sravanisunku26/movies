@@ -38,7 +38,7 @@ class MovieDetailActivity : AppCompatActivity() {
         activityMovieDetailBinding =
             DataBindingUtil.setContentView(this, R.layout.activity_movie_detail)
         setSupportActionBar(activityMovieDetailBinding.toolbar as Toolbar);
-        val movieRepo: MovieRepo = MovieRepo()
+        val movieRepo = MovieRepo(this)
         val factory = MovieDetailViewModelFactory(movieRepo)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true);
@@ -51,7 +51,7 @@ class MovieDetailActivity : AppCompatActivity() {
             movieId = intent.getIntExtra(EXTRA_MOVIE_ID, 0)
         }
         viewModel = ViewModelProviders.of(this, factory).get(MovieDetailsViewModel::class.java)
-        viewModel.getMovieDetails(movieId, this).observe(this, Observer {
+        viewModel.getMovieDetails(movieId).observe(this, Observer {
             Log.v("response:::", it.poster_path)
             activityMovieDetailBinding.result = it
         })
