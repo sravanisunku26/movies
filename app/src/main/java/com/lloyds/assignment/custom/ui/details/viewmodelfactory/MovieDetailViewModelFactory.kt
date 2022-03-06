@@ -1,8 +1,8 @@
-package com.lloyds.assignment.custom.module.mainscreen.main.details
+package com.lloyds.assignment.custom.ui.details.viewmodelfactory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.lloyds.assignment.custom.module.details.MovieDetailsViewModel
+import com.lloyds.assignment.custom.ui.details.viewmodel.MovieDetailsViewModel
 import com.lloyds.assignment.custom.repo.MovieRepo
 
 class MovieDetailViewModelFactory(private val movieRepo: MovieRepo): ViewModelProvider.Factory{

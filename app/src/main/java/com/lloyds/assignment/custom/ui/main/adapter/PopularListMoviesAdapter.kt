@@ -1,8 +1,7 @@
-package com.lloyds.assignment.custom.movie
+package com.lloyds.assignment.custom.ui.main.adapter
 
 import android.net.Uri
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -16,17 +15,18 @@ import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
+
 /**
  * Adapter for displaying Popular Movie List
  */
-class PopularListMoviesAdapter(var onItemClickListener: PlayingNowMoviesAdapter.OnItemClickListener) :
+class PopularListMoviesAdapter(private var onItemClickListener: PlayingNowMoviesAdapter.OnItemClickListener) :
     PagedListAdapter<Results, PopularListMoviesAdapter.UserViewHolder>(USER_COMPARATOR) {
 
-    lateinit var mostPopularChildLayoutBinding: MostPopularChildLayoutBinding;
+    private lateinit var mostPopularChildLayoutBinding: MostPopularChildLayoutBinding
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
         mostPopularChildLayoutBinding = DataBindingUtil.inflate(
-            LayoutInflater.from(parent.getContext()),
+            LayoutInflater.from(parent.context),
             R.layout.most_popular_child_layout,
             parent,
             false
@@ -39,7 +39,7 @@ class PopularListMoviesAdapter(var onItemClickListener: PlayingNowMoviesAdapter.
         result?.let { holder.bind(it, onItemClickListener) }
     }
 
-    class UserViewHolder(var popularChildLayoutBinding: MostPopularChildLayoutBinding) :
+    class UserViewHolder(private var popularChildLayoutBinding: MostPopularChildLayoutBinding) :
         RecyclerView.ViewHolder(popularChildLayoutBinding.root) {
         fun bind(
             results: Results,
@@ -47,27 +47,27 @@ class PopularListMoviesAdapter(var onItemClickListener: PlayingNowMoviesAdapter.
         ) {
             popularChildLayoutBinding.result = results
             popularChildLayoutBinding.executePendingBindings()
-            popularChildLayoutBinding.populatRl.setOnClickListener(View.OnClickListener {
+            popularChildLayoutBinding.populatRl.setOnClickListener {
                 onItemClickListener.onItemClick(
                     results
                 )
-            })
+            }
             Picasso.get()
                 .load(Uri.parse("https://image.tmdb.org/t/p/original${results.poster_path}"))
                 .placeholder(R.drawable.placeholder)
-                .into(popularChildLayoutBinding.thumbnailIv);
-            val input_date = results?.release_date
-            if(!input_date.isNullOrEmpty()) {
-                val format1 = SimpleDateFormat("yyyy-MM-dd")
-                val dt1: Date = format1.parse(input_date)
-                val format2 = SimpleDateFormat("MMMM dd, YYYY")
+                .into(popularChildLayoutBinding.thumbnailIv)
+            val inputDate = results.release_date
+            if(!inputDate.isNullOrEmpty()) {
+                val format1 = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+                val dt1: Date = format1.parse(inputDate)!!
+                val format2 = SimpleDateFormat("MMMM dd, YYYY", Locale.ENGLISH)
                 popularChildLayoutBinding.releaseDate.text = format2.format(dt1)
             }
 
             val voteAvg: Float? = results.vote_average?.times(10)
-            popularChildLayoutBinding.ratingView.setTextColor(
-                popularChildLayoutBinding.ratingView.context.getResources()
-                    .getColor(R.color.info_text_color)
+            popularChildLayoutBinding.ratingView.setTextColor(ContextCompat.getColor(
+                popularChildLayoutBinding.ratingView.context,
+                    R.color.info_text_color)
             )
             voteAvg?.roundToInt()?.let { popularChildLayoutBinding.ratingView.setProgress(it) }
             voteAvg.let {
@@ -75,12 +75,12 @@ class PopularListMoviesAdapter(var onItemClickListener: PlayingNowMoviesAdapter.
                     if (it > 50) {
                         popularChildLayoutBinding.ratingView.setProgressColor(
                             ContextCompat.getColor(popularChildLayoutBinding.ratingView.context,R.color.colorPrimary)
-                        );
+                        )
 
                     } else {
                         popularChildLayoutBinding.ratingView.setProgressColor(
                             ContextCompat.getColor(popularChildLayoutBinding.ratingView.context,R.color.title_color)
-                        );
+                        )
 
                     }
                 }

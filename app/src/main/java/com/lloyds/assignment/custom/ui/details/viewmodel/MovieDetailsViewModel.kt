@@ -1,6 +1,5 @@
-package com.lloyds.assignment.custom.module.details
+package com.lloyds.assignment.custom.ui.details.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.lloyds.assignment.custom.model.MovieDetailResponse

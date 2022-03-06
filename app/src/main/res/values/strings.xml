@@ -8,4 +8,5 @@
     <string name="network_connection_available">Internet Connected</string>
     <string name="please_connect_internet">Please Connect to internet</string>
     <string name="internet_not_available" tools:ignore="ExtraTranslation">Internet Connection not available</string>
+    <string name="date_format">%1$s - %2$s</string>
 </resources>

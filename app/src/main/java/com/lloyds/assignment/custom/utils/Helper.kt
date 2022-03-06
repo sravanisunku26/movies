@@ -5,7 +5,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 
-object Utils {
+object Helper {
      fun internetCheck(c: Context): Boolean {
         val cmg = c.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 

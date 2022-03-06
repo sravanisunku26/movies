@@ -1,4 +1,4 @@
-package com.lloyds.assignment.custom.module.details
+package com.lloyds.assignment.custom.ui.details.viewmodelfactory
 
 import android.content.Context
 import android.util.Log

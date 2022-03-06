@@ -1,4 +1,4 @@
-package com.lloyds.assignment.custom
+package com.lloyds.assignment.custom.customviews
 
 import android.animation.ValueAnimator
 import android.content.Context
@@ -30,7 +30,7 @@ class RatingView @JvmOverloads constructor(
     private var mProgressColor: Int = Color.BLACK // Outline color
     private var mTextColor: Int = Color.BLACK // Progress text color
     private val mPaint // Allocate paint outside onDraw to avoid unnecessary object creation
-            : Paint
+            : Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -50,23 +50,23 @@ class RatingView @JvmOverloads constructor(
         val diameter = Math.min(mViewWidth, mViewHeight)
         val pad = mStrokeWidth / 2.0.toFloat()
         val outerOval = RectF(pad, pad, diameter - pad, diameter - pad)
-        mPaint.setColor(mProgressColor)
-        mPaint.setStrokeWidth(mStrokeWidth)
-        mPaint.setAntiAlias(true)
-        mPaint.setStrokeCap(if (mRoundedCorners) Paint.Cap.ROUND else Paint.Cap.BUTT)
-        mPaint.setStyle(Paint.Style.STROKE)
+        mPaint.color = mProgressColor
+        mPaint.strokeWidth = mStrokeWidth
+        mPaint.isAntiAlias = true
+        mPaint.strokeCap = if (mRoundedCorners) Paint.Cap.ROUND else Paint.Cap.BUTT
+        mPaint.style = Paint.Style.STROKE
         canvas.drawArc(outerOval, mStartAngle, mSweepAngle, false, mPaint)
     }
 
     private fun drawText(canvas: Canvas) {
-        mPaint.setTextSize(Math.min(mViewWidth, mViewHeight) / 5f)
-        mPaint.setTextAlign(Paint.Align.CENTER)
-        mPaint.setStrokeWidth(0f)
-        mPaint.setColor(mTextColor)
+        mPaint.textSize = Math.min(mViewWidth, mViewHeight) / 5f
+        mPaint.textAlign = Paint.Align.CENTER
+        mPaint.strokeWidth = 0f
+        mPaint.color = mTextColor
 
         // Center text
-        val xPos: Float = canvas.getWidth() / 2f
-        val yPos = (canvas.getHeight() / 2 - (mPaint.descent() + mPaint.ascent()) / 2)
+        val xPos: Float = canvas.width / 2f
+        val yPos = (canvas.height / 2 - (mPaint.descent() + mPaint.ascent()) / 2)
         canvas.drawText(
             calcProgressFromSweepAngle(mSweepAngle).toString() + "%",
             xPos,
@@ -103,32 +103,9 @@ class RatingView @JvmOverloads constructor(
         invalidate()
     }
 
-    fun setProgressWidth(width: Float) {
-        mStrokeWidth = width
-        invalidate()
-    }
-
     fun setTextColor(color: Int) {
         mTextColor = color
         invalidate()
     }
 
-    fun showProgressText(show: Boolean) {
-        mDrawText = show
-        invalidate()
-    }
-
-    /**
-     * Toggle this if you don't want rounded corners on progress bar.
-     * Default is true.
-     * @param roundedCorners true if you want rounded corners of false otherwise.
-     */
-    fun useRoundedCorners(roundedCorners: Boolean) {
-        mRoundedCorners = roundedCorners
-        invalidate()
-    }
-
-    init {
-        mPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    }
 }

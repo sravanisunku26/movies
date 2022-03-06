@@ -9,7 +9,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
 import com.lloyds.assignment.R
-import com.lloyds.assignment.custom.module.main.MainActivity
+import com.lloyds.assignment.custom.ui.main.activity.MainActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import org.junit.Rule
 import org.junit.Test

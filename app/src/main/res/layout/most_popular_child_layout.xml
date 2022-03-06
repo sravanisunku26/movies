@@ -53,7 +53,7 @@
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
 
-        <com.lloyds.assignment.custom.RatingView
+        <com.lloyds.assignment.custom.customviews.RatingView
             android:id="@+id/rating_view"
             android:layout_width="@dimen/_40sdp"
             android:layout_height="@dimen/_40sdp"

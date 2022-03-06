@@ -9,40 +9,22 @@ import com.lloyds.assignment.custom.model.MovieDetailResponse
 import com.lloyds.assignment.custom.model.PlayingNowResponse
 import com.lloyds.assignment.custom.model.PopularListResponse
 import com.lloyds.assignment.custom.model.Results
-import com.lloyds.assignment.custom.utils.Utils
-import okhttp3.OkHttpClient
+import com.lloyds.assignment.custom.utils.FIRST_PAGE
+import com.lloyds.assignment.custom.utils.Helper
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class MovieRepo(private val context: Context) : PageKeyedDataSource<Int, Results>() {
-    private val FIRST_PAGE = 1
-
-    companion object {
-        private val myOkHttpClient = OkHttpClient().newBuilder()
-            .build()
-
-        val baseUrl = "https://api.themoviedb.org/3/"
-        val retrofit = Retrofit.Builder()
-            .client(myOkHttpClient)
-            .baseUrl(baseUrl)
-
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        val service = retrofit.create(MovieApiService::class.java)
-        var PAGE_SIZE = 6
-    }
-
+    private var pageSize = 6
     /**
      * Playing now Movies list
      */
     fun getPlayingNowResponse(): LiveData<PlayingNowResponse> {
         Log.v("getPlayingNowResponse", "getPlayingNowResponse")
         val liveData = MutableLiveData<PlayingNowResponse>()
-        if (Utils.internetCheck(context)) {
-            service.getPlayingNowResponse().enqueue(object : Callback<PlayingNowResponse> {
+        if (Helper.internetCheck(context)) {
+            RetrofitApi.retrofitService.getPlayingNowResponse().enqueue(object : Callback<PlayingNowResponse> {
                 override fun onResponse(
                     call: Call<PlayingNowResponse>,
                     response: Response<PlayingNowResponse>
@@ -51,10 +33,9 @@ class MovieRepo(private val context: Context) : PageKeyedDataSource<Int, Results
                     if (response.code() == 200) {
                         val playingNowResponse = response.body()
                         liveData.value = response.body()
-
-                        Log.v("onsuccess", playingNowResponse.toString())
+                        Log.v("success", playingNowResponse.toString())
                     } else {
-                        Log.v("onsuccess", response.message())
+                        Log.v("success", response.message())
                     }
                 }
 
@@ -73,8 +54,8 @@ class MovieRepo(private val context: Context) : PageKeyedDataSource<Int, Results
      */
     fun getMovieDetailInfo(movieId: Int): LiveData<MovieDetailResponse> {
         val liveData = MutableLiveData<MovieDetailResponse>()
-        if (Utils.internetCheck(context)) {
-            service.getMovieDetailResponse(movieId).enqueue(object : Callback<MovieDetailResponse> {
+        if (Helper.internetCheck(context)) {
+            RetrofitApi.retrofitService.getMovieDetailResponse(movieId).enqueue(object : Callback<MovieDetailResponse> {
                 override fun onResponse(
                     call: Call<MovieDetailResponse>,
                     response: Response<MovieDetailResponse>
@@ -83,7 +64,7 @@ class MovieRepo(private val context: Context) : PageKeyedDataSource<Int, Results
                     if (response.code() == 200) {
                         liveData.value = response.body()
                     } else
-                        Log.v("onsuccess", response.message())
+                        Log.v("success", response.message())
                 }
 
                 override fun onFailure(call: Call<MovieDetailResponse>, t: Throwable) {
@@ -99,13 +80,13 @@ class MovieRepo(private val context: Context) : PageKeyedDataSource<Int, Results
         params: LoadInitialParams<Int>,
         callback: LoadInitialCallback<Int, Results>
     ) {
-        if (Utils.internetCheck(context)) {
+        if (Helper.internetCheck(context)) {
             val response: Response<PopularListResponse> =
-                service.getPopularListResponse(FIRST_PAGE).execute();
+                RetrofitApi.retrofitService.getPopularListResponse(FIRST_PAGE).execute()
 
             val apiResponse = response.body()!!
-            val results = apiResponse.results;
-            PAGE_SIZE = apiResponse.total_pages;
+            val results = apiResponse.results
+            pageSize = apiResponse.total_pages
             Log.v("loadInitial", results.toString())
             apiResponse.let {
                 callback.onResult(results, null, FIRST_PAGE + 1)
@@ -117,8 +98,8 @@ class MovieRepo(private val context: Context) : PageKeyedDataSource<Int, Results
         params: LoadParams<Int>,
         callback: LoadCallback<Int, Results>
     ) {
-        if (Utils.internetCheck(context)) {
-            service.getPopularListResponse(params.key)
+        if (Helper.internetCheck(context)) {
+            RetrofitApi.retrofitService.getPopularListResponse(params.key)
             .enqueue(object : Callback<PopularListResponse> {
                 override fun onResponse(
                     call: Call<PopularListResponse>,
@@ -127,7 +108,7 @@ class MovieRepo(private val context: Context) : PageKeyedDataSource<Int, Results
                     if (response.isSuccessful) {
                         val apiResponse = response.body()!!
                         val results: List<Results> = apiResponse.results
-                        val listResponse = ArrayList<PopularListResponse>();
+                        val listResponse = ArrayList<PopularListResponse>()
                         listResponse.add(apiResponse)
                         Log.v("loadBefore", results.toString())
                         val key = if (params.key > 1) params.key - 1 else 0
@@ -149,8 +130,8 @@ class MovieRepo(private val context: Context) : PageKeyedDataSource<Int, Results
         params: LoadParams<Int>,
         callback: LoadCallback<Int, Results>
     ) {
-        if (Utils.internetCheck(context)) {
-            service.getPopularListResponse(params.key)
+        if (Helper.internetCheck(context)) {
+            RetrofitApi.retrofitService.getPopularListResponse(params.key)
                 .enqueue(object : Callback<PopularListResponse> {
                     override fun onResponse(
                         call: Call<PopularListResponse>,

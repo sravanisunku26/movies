@@ -1,8 +1,7 @@
-package com.lloyds.assignment.custom.movie
+package com.lloyds.assignment.custom.ui.main.adapter
 
 import android.net.Uri
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -16,19 +15,19 @@ import com.squareup.picasso.Picasso
  * Adapter for displaying Playing now list items
  */
 class PlayingNowMoviesAdapter(
-    val items: PlayingNowResponse,
-    var onItemClickListener: OnItemClickListener
+    private val items: PlayingNowResponse,
+    private var onItemClickListener: OnItemClickListener
 ) :
     RecyclerView.Adapter<PlayingNowMoviesAdapter.ViewHolder>() {
-    lateinit var playingNowChildLayoutBinding: PlayingNowChildLayoutBinding;
+    private lateinit var playingNowChildLayoutBinding: PlayingNowChildLayoutBinding
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         playingNowChildLayoutBinding = DataBindingUtil.inflate(
-            LayoutInflater.from(parent.getContext()),
+            LayoutInflater.from(parent.context),
             R.layout.playing_now_child_layout,
             parent,
             false
-        );
-        return ViewHolder(playingNowChildLayoutBinding);
+        )
+        return ViewHolder(playingNowChildLayoutBinding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) =
@@ -36,7 +35,7 @@ class PlayingNowMoviesAdapter(
 
     override fun getItemCount() = items.results.size
 
-    class ViewHolder(var playingNowChildLayoutBinding: PlayingNowChildLayoutBinding) :
+    class ViewHolder(private var playingNowChildLayoutBinding: PlayingNowChildLayoutBinding) :
         RecyclerView.ViewHolder(playingNowChildLayoutBinding.root) {
 
         fun bind(item: Results, onItemClickListener: OnItemClickListener) {
@@ -44,12 +43,12 @@ class PlayingNowMoviesAdapter(
                 .placeholder(
                     R.drawable.placeholder
                 ).fit().centerCrop()
-                .into(playingNowChildLayoutBinding.thumbnailIv);
-            playingNowChildLayoutBinding.thumbnailIv.setOnClickListener(View.OnClickListener {
+                .into(playingNowChildLayoutBinding.thumbnailIv)
+            playingNowChildLayoutBinding.thumbnailIv.setOnClickListener {
                 onItemClickListener.onItemClick(
                     item
                 )
-            })
+            }
         }
     }
 
